@@ -1,0 +1,473 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Post - LYNQ{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/cropperjs@1.5.13/dist/cropper.css">
+
+<style>
+    .edit-post-container {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 25px;
+        box-shadow: 0 8px 32px 0 rgba(10, 76, 104, 0.37);
+        padding: 3rem;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .edit-post-container h1 {
+        color: white;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-group textarea {
+        width: 100%;
+        padding: 1rem;
+        border: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        color: #0A4C68;
+        font-size: 1rem;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 150px;
+        transition: all 0.3s ease;
+    }
+
+    .form-group textarea:focus {
+        outline: none;
+        background: white;
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .image-preview-container {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px dashed rgba(78, 205, 196, 0.5);
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+        min-height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 1.5rem 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .image-preview-container:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: #4ECDC4;
+    }
+
+    .image-preview-container img {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 8px;
+    }
+
+    .image-placeholder {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 1rem;
+    }
+
+    .file-input-wrapper input[type="file"] {
+        position: absolute;
+        left: -9999px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%);
+        color: #0A4C68;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(119, 235, 44, 0.4);
+    }
+
+    .btn-cancel {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .char-count {
+        text-align: right;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.85rem;
+        margin-top: 0.3rem;
+    }
+
+    /* CROP MODAL */
+    .crop-modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .crop-modal.show {
+        display: flex;
+    }
+
+    .crop-modal-content {
+        background: rgba(10, 76, 104, 0.98);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        padding: 2rem;
+        border-radius: 20px;
+        max-width: 600px;
+        width: 100%;
+        box-shadow: 0 8px 32px rgba(10, 76, 104, 0.5);
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .crop-modal-header {
+        color: white;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .crop-modal-header h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .crop-modal-header p {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+    }
+
+    #cropImage {
+        max-width: 100%;
+        max-height: 400px;
+        border-radius: 12px;
+        margin: 1rem 0;
+    }
+
+    .crop-tools {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .crop-tool-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+
+    .crop-tool-btn:hover {
+        background: rgba(78, 205, 196, 0.3);
+        border-color: rgba(78, 205, 196, 0.6);
+    }
+
+    .crop-controls {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .crop-btn {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .crop-btn.primary {
+        background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%);
+        color: #0A4C68;
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+    }
+
+    .crop-btn.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(119, 235, 44, 0.4);
+    }
+
+    .crop-btn.secondary {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .crop-btn.secondary:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .remove-image-btn {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .remove-image-btn:hover {
+        background: #c0392b;
+    }
+
+    @media (max-width: 768px) {
+        .edit-post-container {
+            padding: 1.5rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-submit, .btn-cancel {
+            width: 100%;
+        }
+
+        .crop-modal-content {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="edit-post-container">
+        <h1>Edit Post</h1>
+
+        <form method="POST" id="editPostForm">
+            <div class="form-group">
+                <label for="content">Content</label>
+                <textarea id="content" name="content" placeholder="Edit your post..." required>{{ post.content }}</textarea>
+                <div class="char-count"><span id="charCount">{{ post.content | length }}</span> characters</div>
+            </div>
+
+            <!-- Image Preview -->
+            <div class="image-preview-container" id="imagePreviewContainer" onclick="document.getElementById('postImageInput').click()">
+                {% if post.image_filename %}
+                    <img id="previewImage" src="/static/uploads/posts/{{ post.image_filename }}" style="display: block;">
+                {% else %}
+                    <div class="image-placeholder">
+                        🖼️ Click to change image
+                    </div>
+                    <img id="previewImage" style="display: none;">
+                {% endif %}
+            </div>
+
+            <input type="hidden" id="post_image" name="post_image">
+            <input type="file" id="postImageInput" accept="image/png,image/jpg,image/jpeg,image/gif,image/webp" style="display: none;">
+
+            {% if post.image_filename %}
+                <div style="text-align: center;">
+                    <button type="button" class="remove-image-btn" onclick="removePostImage()">✕ Remove Image</button>
+                </div>
+            {% endif %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">Update Post</button>
+                <a href="{{ url_for('community.view_post', post_id=post.id) }}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- CROP MODAL -->
+    <div class="crop-modal" id="cropModal">
+        <div class="crop-modal-content">
+            <div class="crop-modal-header">
+                <h2>Crop Post Image</h2>
+                <p>Adjust the crop area for your post image</p>
+            </div>
+
+            <div class="crop-tools">
+                <button type="button" class="crop-tool-btn" onclick="zoomIn()">🔍+ Zoom In</button>
+                <button type="button" class="crop-tool-btn" onclick="zoomOut()">🔍- Zoom Out</button>
+                <button type="button" class="crop-tool-btn" onclick="resetCrop()">↺ Reset</button>
+            </div>
+
+            <img id="cropImage" src="" alt="Crop Image">
+
+            <div class="crop-controls">
+                <button type="button" class="crop-btn primary" onclick="saveCroppedImage()">✓ Apply Crop</button>
+                <button type="button" class="crop-btn secondary" onclick="closeCropModal()">✕ Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/cropperjs@1.5.13/dist/cropper.js"></script>
+    <script>
+        let cropperInstance = null;
+
+        const textarea = document.getElementById('content');
+        const charCount = document.getElementById('charCount');
+
+        textarea.addEventListener('input', function() {
+            charCount.textContent = this.value.length;
+        });
+
+        document.getElementById('postImageInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const cropImage = document.getElementById('cropImage');
+                    cropImage.src = e.target.result;
+                    
+                    if (cropperInstance) {
+                        cropperInstance.destroy();
+                    }
+                    
+                    cropperInstance = new Cropper(cropImage, {
+                        aspectRatio: NaN,
+                        viewMode: 1,
+                        autoCropArea: 0.8,
+                        responsive: true,
+                        guides: true,
+                        center: true,
+                        highlight: true,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        toggleDragModeOnDblclick: true,
+                    });
+                    
+                    openCropModal();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function openCropModal() {
+            document.getElementById('cropModal').classList.add('show');
+        }
+
+        function closeCropModal() {
+            document.getElementById('cropModal').classList.remove('show');
+        }
+
+        function zoomIn() {
+            if (cropperInstance) cropperInstance.zoom(0.1);
+        }
+
+        function zoomOut() {
+            if (cropperInstance) cropperInstance.zoom(-0.1);
+        }
+
+        function resetCrop() {
+            if (cropperInstance) cropperInstance.reset();
+        }
+
+        function saveCroppedImage() {
+            if (!cropperInstance) return;
+
+            const canvas = cropperInstance.getCroppedCanvas({
+                maxWidth: 1200,
+                maxHeight: 800,
+                fillColor: '#fff',
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high',
+            });
+
+            canvas.toBlob(function(blob) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('post_image').value = e.target.result;
+                    document.getElementById('previewImage').src = e.target.result;
+                    document.getElementById('previewImage').style.display = 'block';
+                    const placeholder = document.querySelector('.image-placeholder');
+                    if (placeholder) placeholder.style.display = 'none';
+                    closeCropModal();
+                    alert('✓ Image cropped successfully!');
+                };
+                reader.readAsDataURL(blob);
+            }, 'image/jpeg', 0.95);
+        }
+
+        function removePostImage() {
+            document.getElementById('post_image').value = '';
+            document.getElementById('previewImage').src = '';
+            document.getElementById('previewImage').style.display = 'none';
+            const placeholder = document.querySelector('.image-placeholder');
+            if (placeholder) placeholder.style.display = 'block';
+            document.getElementById('postImageInput').value = '';
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeCropModal();
+            }
+        });
+
+        document.getElementById('cropModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeCropModal();
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,412 @@
+{% extends "base.html" %}
+
+{% block title %}Application Details - LYNQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .application-detail-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .back-link {
+        color: #4ECDC4;
+        text-decoration: none;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+        color: #2BC4B5;
+        transform: translateX(-3px);
+    }
+
+    .detail-card {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(10, 76, 104, 0.37);
+        margin-bottom: 2rem;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .card-header h1 {
+        color: #77EB2C;
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .card-header p {
+        color: rgba(255, 255, 255, 0.6);
+        margin: 0.5rem 0 0 0;
+    }
+
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.85rem;
+    }
+
+    .status-pending {
+        background: rgba(255, 193, 7, 0.2);
+        color: #ffd54f;
+        border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+
+    .status-reviewed {
+        background: rgba(33, 150, 243, 0.2);
+        color: #64b5f6;
+        border: 1px solid rgba(33, 150, 243, 0.3);
+    }
+
+    .status-accepted {
+        background: rgba(76, 175, 80, 0.2);
+        color: #81c784;
+        border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+
+    .status-rejected {
+        background: rgba(244, 67, 54, 0.2);
+        color: #ef5350;
+        border: 1px solid rgba(244, 67, 54, 0.3);
+    }
+
+    .section-title {
+        color: #4ECDC4;
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin: 2rem 0 1rem 0;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid rgba(78, 205, 196, 0.3);
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+
+    .detail-item {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-radius: 12px;
+    }
+
+    .detail-item-label {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .detail-item-value {
+        color: white;
+        margin-top: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .detail-item-value a {
+        color: #4ECDC4;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .detail-item-value a:hover {
+        color: #2BC4B5;
+        text-decoration: underline;
+    }
+
+    .timeline {
+        margin: 1.5rem 0;
+    }
+
+    .timeline-item {
+        display: flex;
+        margin-bottom: 1.5rem;
+    }
+
+    .timeline-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+        font-weight: bold;
+    }
+
+    .timeline-submitted {
+        background: #4ECDC4;
+    }
+
+    .timeline-reviewed {
+        background: #77EB2C;
+    }
+
+    .timeline-accepted {
+        background: #76c784;
+    }
+
+    .timeline-rejected {
+        background: #ef5350;
+    }
+
+    .timeline-content {
+        flex: 1;
+    }
+
+    .timeline-text {
+        color: white;
+        font-weight: 600;
+    }
+
+    .timeline-date {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.85rem;
+    }
+
+    .content-section {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin: 1rem 0;
+    }
+
+    .content-text {
+        color: rgba(255, 255, 255, 0.8);
+        white-space: pre-wrap;
+        line-height: 1.6;
+    }
+
+    .review-notes {
+        background: rgba(244, 67, 54, 0.1);
+        border-left: 3px solid #ef5350;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin: 1.5rem 0;
+    }
+
+    .review-notes h3 {
+        color: #ef5350;
+        margin-top: 0;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%);
+        color: #0A4C68;
+        border: none;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.95rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .card-header {
+            flex-direction: column;
+        }
+
+        .card-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .detail-card {
+            padding: 1.5rem;
+        }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="application-detail-container">
+        <!-- Back Link -->
+        <a href="{{ url_for('jobs.my_applications') }}" class="back-link">← Back to Applications</a>
+
+        <!-- Main Card -->
+        <div class="detail-card">
+            <div class="card-header">
+                <div>
+                    <h1>{{ application.job.title }}</h1>
+                    <p><strong style="color: #77EB2C;">{{ application.job.company }}</strong>
+                    {% if application.job.location %} • {{ application.job.location }}{% endif %}</p>
+                </div>
+                <span class="status-badge status-{{ application.status }}">{{ application.status.upper() }}</span>
+            </div>
+
+            <!-- Job Summary -->
+            <h2 class="section-title">📋 Job Summary</h2>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-item-label">Position</div>
+                    <div class="detail-item-value">{{ application.job.title }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-item-label">Company</div>
+                    <div class="detail-item-value">{{ application.job.company }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-item-label">Job Type</div>
+                    <div class="detail-item-value">{{ application.job.job_type or 'Not specified' }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-item-label">Location</div>
+                    <div class="detail-item-value">{{ application.job.location or 'Not specified' }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-item-label">Salary</div>
+                    <div class="detail-item-value">{{ application.job.salary_range or 'Not specified' }}</div>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <h2 class="section-title">📅 Application Timeline</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-icon timeline-submitted">✓</div>
+                    <div class="timeline-content">
+                        <div class="timeline-text">Application Submitted</div>
+                        <div class="timeline-date">{{ application.applied_at.strftime('%B %d, %Y at %H:%M') }}</div>
+                    </div>
+                </div>
+
+                {% if application.reviewed_at %}
+                    <div class="timeline-item">
+                        <div class="timeline-icon timeline-reviewed">👀</div>
+                        <div class="timeline-content">
+                            <div class="timeline-text">Application Reviewed</div>
+                            <div class="timeline-date">{{ application.reviewed_at.strftime('%B %d, %Y at %H:%M') }}</div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if application.status == 'accepted' %}
+                    <div class="timeline-item">
+                        <div class="timeline-icon timeline-accepted">✓</div>
+                        <div class="timeline-content">
+                            <div class="timeline-text">Application Accepted</div>
+                            <div class="timeline-date">{{ application.reviewed_at.strftime('%B %d, %Y') }}</div>
+                        </div>
+                    </div>
+                {% elif application.status == 'rejected' %}
+                    <div class="timeline-item">
+                        <div class="timeline-icon timeline-rejected">✗</div>
+                        <div class="timeline-content">
+                            <div class="timeline-text">Application Rejected</div>
+                            <div class="timeline-date">{{ application.reviewed_at.strftime('%B %d, %Y') }}</div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Contact Information -->
+            <h2 class="section-title">📞 Contact Information</h2>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-item-label">Phone</div>
+                    <div class="detail-item-value">{{ application.phone }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-item-label">Email</div>
+                    <div class="detail-item-value"><a href="mailto:{{ application.email }}">{{ application.email }}</a></div>
+                </div>
+                {% if application.linkedin_url %}
+                    <div class="detail-item">
+                        <div class="detail-item-label">LinkedIn</div>
+                        <div class="detail-item-value"><a href="{{ application.linkedin_url }}" target="_blank">View Profile →</a></div>
+                    </div>
+                {% endif %}
+                {% if application.portfolio_url %}
+                    <div class="detail-item">
+                        <div class="detail-item-label">Portfolio</div>
+                        <div class="detail-item-value"><a href="{{ application.portfolio_url }}" target="_blank">View Portfolio →</a></div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Resume -->
+            {% if application.resume_filename %}
+                <h2 class="section-title">📄 Resume</h2>
+                <div class="content-section">
+                    <p style="color: rgba(255, 255, 255, 0.8); margin: 0;">✓ Resume has been submitted with this application</p>
+                </div>
+            {% endif %}
+
+            <!-- Cover Letter -->
+            {% if application.cover_letter %}
+                <h2 class="section-title">💬 Cover Letter</h2>
+                <div class="content-section">
+                    <div class="content-text">{{ application.cover_letter }}</div>
+                </div>
+            {% endif %}
+
+            <!-- Review Notes -->
+            {% if application.review_notes %}
+                <h2 class="section-title">📝 Admin Feedback</h2>
+                <div class="review-notes">
+                    <div style="color: rgba(255, 255, 255, 0.8); white-space: pre-wrap; line-height: 1.6;">{{ application.review_notes }}</div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="{{ url_for('jobs.my_applications') }}" class="btn">← Back to Applications</a>
+            <a href="{{ url_for('jobs.list_jobs') }}" class="btn">Browse More Jobs</a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Skill - LYNQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .skill-container {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 25px;
+        box-shadow: 0 8px 32px 0 rgba(10, 76, 104, 0.37);
+        padding: 3rem;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .skill-container h1 {
+        color: white;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.8rem;
+        border: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        color: #0A4C68;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        background: white;
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .required {
+        color: #e74c3c;
+    }
+
+    .certificate-preview {
+        margin: 1rem 0;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .certificate-preview img {
+        width: 150px;
+        height: 150px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+
+    .file-input-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .file-input-label {
+        display: block;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.95) !important;
+        border: 2px dashed #4ECDC4;
+        border-radius: 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #000000 !important;
+        font-weight: 600;
+    }
+
+    .file-input-label:hover {
+        background: rgba(255, 255, 255, 0.95) !important;
+        border-color: #2BC4B5;
+        color: #000000 !important;
+    }
+
+    .file-input-wrapper input[type="file"] {
+        position: absolute;
+        left: -9999px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%);
+        color: #0A4C68;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-submit::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(119, 235, 44, 0.4);
+    }
+
+    .btn-submit:hover::before {
+        left: 100%;
+    }
+
+    .btn-cancel {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .help-text {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.85rem;
+        margin-top: 0.3rem;
+    }
+
+    @media (max-width: 768px) {
+        .skill-container {
+            padding: 1.5rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-submit, .btn-cancel {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="skill-container">
+        <h1>Edit Skill</h1>
+
+        <form method="POST" enctype="multipart/form-data">
+            <!-- Skill Name -->
+            <div class="form-group">
+                <label for="name">Skill Name <span class="required">*</span></label>
+                <input type="text" id="name" name="name" value="{{ skill.name }}" required>
+            </div>
+
+            <!-- Certification -->
+            <div class="form-group">
+                <label for="certification">Certification Name</label>
+                <input type="text" id="certification" name="certification" value="{{ skill.certification or '' }}">
+                <div class="help-text">Optional: Name of the certification you have</div>
+            </div>
+
+            <!-- Verification Link -->
+            <div class="form-group">
+                <label for="verification_link">Certificate Verification Link</label>
+                <input type="url" id="verification_link" name="verification_link" value="{{ skill.verification_link or '' }}">
+                <div class="help-text">Optional: Link to your certificate or verification page</div>
+            </div>
+
+            <!-- Certificate Preview -->
+            {% if skill.certificate_file %}
+                <div class="certificate-preview">
+                    <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 0.5rem;">Current Certificate:</p>
+                    <img src="/static/uploads/certificates/{{ skill.certificate_file }}" alt="Certificate">
+                </div>
+            {% endif %}
+
+            <!-- Certificate Upload -->
+            <div class="form-group">
+                <label>Update Certificate Image</label>
+                <div class="file-input-wrapper">
+                    <label for="certificate" class="file-input-label">
+                        📸 Click or drag new certificate image here
+                    </label>
+                    <input type="file" id="certificate" name="certificate" accept="image/png,image/jpg,image/jpeg,image/gif,image/webp">
+                </div>
+                <div class="help-text">Optional: PNG, JPG, JPEG, GIF, WebP (Max 16MB) - Leave empty to keep current</div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">Update Skill</button>
+                <a href="{{ url_for('user.profile') }}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

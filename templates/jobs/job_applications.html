@@ -1,0 +1,416 @@
+{% extends "base.html" %}
+
+{% block title %}Job Applications - LYNQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .applications-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .applications-header {
+        margin-bottom: 2rem;
+    }
+
+    .back-link {
+        color: #4ECDC4;
+        text-decoration: none;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+        color: #2BC4B5;
+        transform: translateX(-3px);
+    }
+
+    .applications-title {
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .job-info {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.95rem;
+        margin-top: 0.5rem;
+    }
+
+    .job-info strong {
+        color: #77EB2C;
+    }
+
+    .applicant-card {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 32px rgba(10, 76, 104, 0.37);
+        transition: all 0.3s ease;
+    }
+
+    .applicant-card:hover {
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 12px 40px rgba(10, 76, 104, 0.5);
+        transform: translateY(-3px);
+    }
+
+    .applicant-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .applicant-info h3 {
+        color: #77EB2C;
+        margin: 0 0 0.3rem 0;
+        font-size: 1.2rem;
+    }
+
+    .applicant-info p {
+        color: rgba(255, 255, 255, 0.6);
+        margin: 0.2rem 0;
+        font-size: 0.9rem;
+    }
+
+    .status-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    .status-pending {
+        background: rgba(255, 193, 7, 0.2);
+        color: #ffd54f;
+        border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+
+    .status-reviewed {
+        background: rgba(33, 150, 243, 0.2);
+        color: #64b5f6;
+        border: 1px solid rgba(33, 150, 243, 0.3);
+    }
+
+    .status-accepted {
+        background: rgba(76, 175, 80, 0.2);
+        color: #81c784;
+        border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+
+    .status-rejected {
+        background: rgba(244, 67, 54, 0.2);
+        color: #ef5350;
+        border: 1px solid rgba(244, 67, 54, 0.3);
+    }
+
+    .contact-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        margin: 1rem 0;
+    }
+
+    .contact-item-label {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .contact-item-value {
+        color: white;
+        margin-top: 0.3rem;
+        word-break: break-all;
+    }
+
+    .contact-item-value a {
+        color: #4ECDC4;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .contact-item-value a:hover {
+        color: #2BC4B5;
+        text-decoration: underline;
+    }
+
+    .section {
+        margin: 1rem 0;
+    }
+
+    .section-title {
+        color: #4ECDC4;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .section-content {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-radius: 12px;
+        color: rgba(255, 255, 255, 0.8);
+        white-space: pre-wrap;
+        line-height: 1.5;
+    }
+
+    .download-btn {
+        background: rgba(78, 205, 196, 0.2);
+        color: #4ECDC4;
+        border: 1px solid rgba(78, 205, 196, 0.4);
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+    .download-btn:hover {
+        background: rgba(78, 205, 196, 0.3);
+        color: #2BC4B5;
+    }
+
+    .status-form {
+        background: rgba(78, 205, 196, 0.1);
+        border: 1px solid rgba(78, 205, 196, 0.2);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin: 1rem 0;
+    }
+
+    .status-form h4 {
+        color: #4ECDC4;
+        margin-top: 0;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        display: block;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        font-size: 0.9rem;
+    }
+
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.6rem;
+        border: none;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.95);
+        color: #0A4C68;
+        font-size: 0.9rem;
+        font-family: inherit;
+    }
+
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        background: white;
+        box-shadow: 0 4px 12px rgba(119, 235, 44, 0.3);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .update-btn {
+        background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%);
+        color: #0A4C68;
+        border: none;
+        padding: 0.7rem 1.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .update-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+    }
+
+    .empty-state {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 20px;
+        padding: 3rem 2rem;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .alert {
+        background: rgba(52, 211, 153, 0.2);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: #86efac;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .applicant-card {
+            padding: 1.5rem;
+        }
+
+        .applicant-header {
+            flex-direction: column;
+        }
+
+        .contact-info {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .update-btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="applications-container">
+        <!-- Back Link -->
+        <a href="{{ url_for('jobs.list_jobs') }}" class="back-link">← Back to Jobs</a>
+
+        <!-- Header -->
+        <div class="applications-header">
+            <h1 class="applications-title">Applications for: {{ job.title }}</h1>
+            <div class="job-info">
+                <strong>{{ job.company }}</strong>
+                {% if job.location %} • {{ job.location }}{% endif %}
+                {% if job.job_applications %} • <strong>{{ job.job_applications|length }}</strong> application(s){% endif %}
+            </div>
+        </div>
+
+        <!-- Alerts -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Applications List -->
+        {% if job.job_applications %}
+            {% for app in job.job_applications %}
+                <div class="applicant-card">
+                    <!-- Header -->
+                    <div class="applicant-header">
+                        <div class="applicant-info">
+                            <h3>{{ app.user.full_name }}</h3>
+                            <p>@{{ app.user.usertag }} • Applied on {{ app.applied_at.strftime('%d %b %Y') }}</p>
+                        </div>
+                        <span class="status-badge status-{{ app.status }}">{{ app.status.upper() }}</span>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="contact-info">
+                        <div>
+                            <div class="contact-item-label">📱 Phone</div>
+                            <div class="contact-item-value">{{ app.phone }}</div>
+                        </div>
+                        <div>
+                            <div class="contact-item-label">✉️ Email</div>
+                            <div class="contact-item-value"><a href="mailto:{{ app.email }}">{{ app.email }}</a></div>
+                        </div>
+                        {% if app.linkedin_url %}
+                            <div>
+                                <div class="contact-item-label">💼 LinkedIn</div>
+                                <div class="contact-item-value"><a href="{{ app.linkedin_url }}" target="_blank">View Profile →</a></div>
+                            </div>
+                        {% endif %}
+                        {% if app.portfolio_url %}
+                            <div>
+                                <div class="contact-item-label">🌐 Portfolio</div>
+                                <div class="contact-item-value"><a href="{{ app.portfolio_url }}" target="_blank">View Portfolio →</a></div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Resume -->
+                    <div class="section">
+                        <div class="section-title">📄 Resume</div>
+                        {% if app.resume_filename %}
+                            <a href="{{ url_for('jobs.download_resume', app_id=app.id) }}" class="download-btn">⬇️ Download Resume</a>
+                        {% else %}
+                            <div style="color: rgba(255, 255, 255, 0.5); font-style: italic;">No resume uploaded</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Cover Letter -->
+                    {% if app.cover_letter %}
+                        <div class="section">
+                            <div class="section-title">💬 Cover Letter</div>
+                            <div class="section-content">{{ app.cover_letter }}</div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Status Update Form -->
+                    <form method="POST" action="{{ url_for('jobs.update_application_status', app_id=app.id) }}" class="status-form">
+                        <h4>Update Application Status</h4>
+                        
+                        <div class="form-group">
+                            <label for="status-{{ app.id }}">Status</label>
+                            <select id="status-{{ app.id }}" name="status" required>
+                                <option value="pending" {% if app.status == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="reviewed" {% if app.status == 'reviewed' %}selected{% endif %}>Reviewed</option>
+                                <option value="accepted" {% if app.status == 'accepted' %}selected{% endif %}>Accepted / Selected</option>
+                                <option value="rejected" {% if app.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notes-{{ app.id }}">Review Notes (Optional)</label>
+                            <textarea id="notes-{{ app.id }}" name="review_notes" rows="3" placeholder="Add feedback or notes...">{{ app.review_notes or '' }}</textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="update-btn">💾 Update Status</button>
+                        </div>
+                    </form>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>📋 No Applications Yet</p>
+                <p>There are no applications for this job.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

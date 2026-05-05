@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Job - LYNQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .edit-job-container {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 25px;
+        box-shadow: 0 8px 32px 0 rgba(10, 76, 104, 0.37);
+        padding: 3rem;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .edit-job-container h1 {
+        color: white;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 0.8rem;
+        border: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        color: #0A4C68;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: all 0.3s ease;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        background: white;
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%);
+        color: #0A4C68;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(119, 235, 44, 0.4);
+    }
+
+    .btn-cancel {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .edit-job-container {
+            padding: 1.5rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-submit,
+        .btn-cancel {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="edit-job-container">
+        <h1>Edit Job</h1>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="title">Job Title *</label>
+                <input type="text" id="title" name="title" value="{{ job.title }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="company">Company *</label>
+                <input type="text" id="company" name="company" value="{{ job.company }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description *</label>
+                <textarea id="description" name="description" required>{{ job.description }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="requirements">Requirements</label>
+                <textarea id="requirements" name="requirements">{{ job.requirements or '' }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" name="location" value="{{ job.location or '' }}">
+            </div>
+
+            <div class="form-group">
+                <label for="job_type">Job Type</label>
+                <select id="job_type" name="job_type">
+                    <option value="">Select Type</option>
+                    <option value="Full-time" {% if job.job_type == 'Full-time' %}selected{% endif %}>Full-time</option>
+                    <option value="Part-time" {% if job.job_type == 'Part-time' %}selected{% endif %}>Part-time</option>
+                    <option value="Contract" {% if job.job_type == 'Contract' %}selected{% endif %}>Contract</option>
+                    <option value="Remote" {% if job.job_type == 'Remote' %}selected{% endif %}>Remote</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="salary_range">Salary Range</label>
+                <input type="text" id="salary_range" name="salary_range" value="{{ job.salary_range or '' }}">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">Update Job</button>
+                <a href="{{ url_for('jobs.list_jobs') }}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

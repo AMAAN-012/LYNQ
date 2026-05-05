@@ -1,0 +1,664 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - LYNQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-header {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 25px;
+        box-shadow: 0 8px 32px 0 rgba(10, 76, 104, 0.37);
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 3rem;
+    }
+
+    .profile-left {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        min-width: 250px;
+    }
+
+    .profile-pic-container {
+        position: relative;
+        width: 200px;
+        height: 200px;
+    }
+
+    .profile-pic-container img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #77EB2C;
+        box-shadow: 0 8px 24px rgba(119, 235, 44, 0.4);
+    }
+
+    .profile-initials {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 4px solid #77EB2C;
+        box-shadow: 0 8px 24px rgba(119, 235, 44, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        font-weight: 800;
+        color: white;
+        background: linear-gradient(135deg, #038081 0%, #4ECDC4 100%);
+    }
+
+    .profile-stats-card {
+        background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%);
+        color: #0A4C68;
+        padding: 1.5rem;
+        border-radius: 15px;
+        width: 100%;
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+    }
+
+    .profile-stats-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+
+    .stat-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid rgba(10, 76, 104, 0.2);
+        font-weight: 600;
+    }
+
+    .stat-row:last-child {
+        border-bottom: none;
+    }
+
+    .stat-label {
+        color: #0A4C68;
+        font-weight: 600;
+    }
+
+    .stat-value {
+        color: #0A4C68;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .profile-right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .profile-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .section-title {
+        background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%);
+        color: #0A4C68;
+        padding: 0.8rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .edit-btn {
+        background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%);
+        color: #0A4C68;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+        text-decoration: none;
+    }
+
+    .edit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(119, 235, 44, 0.4);
+    }
+
+    .info-box {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 15px;
+        padding: 1.5rem;
+        color: white;
+    }
+
+    .info-box h4 {
+        color: #77EB2C;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .info-box p {
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.6;
+        word-break: break-word;
+        margin: 0;
+    }
+
+    .skills-wrapper {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .skill-wrapper {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .skill-card {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 15px;
+        padding: 1.5rem;
+        flex: 1;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 32px rgba(10, 76, 104, 0.37);
+    }
+
+    .skill-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 40px rgba(10, 76, 104, 0.5);
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .skill-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .skill-name {
+        color: #77EB2C;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .skill-certificate-thumbnail {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 2px solid #4ECDC4;
+        box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .skill-certificate-thumbnail:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(78, 205, 196, 0.5);
+    }
+
+    .skill-content {
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .skill-meta {
+        font-size: 0.9rem;
+        margin: 0.5rem 0;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .skill-meta strong {
+        color: #4ECDC4;
+    }
+
+    .skill-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .skill-icons {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        justify-content: flex-start;
+        padding-top: 0.5rem;
+    }
+
+    .icon-btn {
+        background: #4ECDC4;
+        color: #0A4C68;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+    }
+
+    .icon-btn:hover {
+        background: #2BC4B5;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(78, 205, 196, 0.5);
+    }
+
+    .icon-btn.delete {
+        background: #e74c3c;
+        color: white;
+    }
+
+    .icon-btn.delete:hover {
+        background: #c0392b;
+        box-shadow: 0 6px 16px rgba(231, 76, 60, 0.5);
+    }
+
+    .add-skill-btn {
+        background: linear-gradient(135deg, #4ECDC4 0%, #2BC4B5 100%);
+        color: #0A4C68;
+        border: none;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 1rem;
+        box-shadow: 0 6px 16px rgba(78, 205, 196, 0.3);
+    }
+
+    .add-skill-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(78, 205, 196, 0.4);
+    }
+
+    .empty-skills {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: rgba(255, 255, 255, 0.7);
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 15px;
+    }
+
+    .empty-skills p {
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(5px);
+    }
+
+    .modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        max-width: 800px;
+        max-height: 90vh;
+        overflow: auto;
+        position: relative;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #e74c3c;
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-close:hover {
+        background: #c0392b;
+    }
+
+    .modal-image {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+        .profile-header {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-left {
+            width: 100%;
+        }
+
+        .profile-pic-container,
+        .profile-initials {
+            width: 150px;
+            height: 150px;
+        }
+
+        .profile-initials {
+            font-size: 2.5rem;
+        }
+
+        .skill-wrapper {
+            flex-direction: column;
+        }
+
+        .skill-icons {
+            flex-direction: row;
+            gap: 0.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-left">
+            <!-- Profile Picture or Initials Avatar -->
+            <div class="profile-pic-container">
+                {% if user.profile_picture %}
+                    <img src="{{ user.get_profile_picture() }}" alt="Profile">
+                {% else %}
+                    <div class="profile-initials">{{ user.get_initials() }}</div>
+                {% endif %}
+            </div>
+            
+            <!-- Profile Stats -->
+            <div class="profile-stats-card">
+                <h3>Profile Stats</h3>
+                <div class="stat-row">
+                    <span class="stat-label">Number of Skills:</span>
+                    <span class="stat-value">{{ stats.num_skills or 0 }}</span>
+                </div>
+                {% if not user.is_admin %}
+                    <div class="stat-row">
+                        <span class="stat-label">CGPA:</span>
+                        <span class="stat-value">{{ user.cgpa or 'N/A' }}</span>
+                    </div>
+                {% endif %}
+                <div class="stat-row">
+                    <span class="stat-label">No. of posts:</span>
+                    <span class="stat-value">{{ stats.num_posts or 0 }}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">No. of Comments:</span>
+                    <span class="stat-value">{{ stats.num_comments or 0 }}</span>
+                </div>
+                <!-- FIX: Removed "Total Jobs Applied" for students and "Applications Reviewed" -->
+                <!-- Now showing role-specific stats only -->
+                {% if user.is_admin %}
+                    <div class="stat-row">
+                        <span class="stat-label">Jobs Created:</span>
+                        <span class="stat-value">{{ stats.total_jobs_created or 0 }}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Applications Received:</span>
+                        <span class="stat-value">{{ stats.applications_received or 0 }}</span>
+                    </div>
+                {% else %}
+                    <div class="stat-row">
+                        <span class="stat-label">Jobs Selected:</span>
+                        <span class="stat-value">{{ stats.jobs_selected or 0 }}</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="profile-right">
+            <!-- Edit Profile Button -->
+            <div style="display: flex; justify-content: flex-end;">
+                <a href="{{ url_for('user.edit_profile') }}" class="edit-btn">✏️ Edit Profile</a>
+            </div>
+
+            <!-- Personal Info -->
+            <div>
+                <h3 class="section-title">Personal Info</h3>
+                <div class="info-box">
+                    <h4>Name</h4>
+                    <p>{{ user.full_name }}</p>
+                </div>
+                <div class="info-box">
+                    <h4>Age</h4>
+                    <p>{{ user.age or 'Not specified' }}</p>
+                </div>
+                <div class="info-box">
+                    <h4>{% if user.is_admin %}Company{% else %}College{% endif %} Name</h4>
+                    <p>{{ user.company_name or 'Not specified' }}</p>
+                </div>
+            </div>
+
+            <!-- Bio -->
+            <div>
+                <h3 class="section-title">Bio</h3>
+                <div class="info-box">
+                    <p>{{ user.bio or 'No bio added yet' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skills Section -->
+    <div class="profile-right">
+        <div class="profile-section-header">
+            <h3 class="section-title">Skills</h3>
+        </div>
+        
+        {% if skills %}
+            <div class="skills-wrapper">
+                {% for skill in skills %}
+                    <div class="skill-wrapper">
+                        <div class="skill-card">
+                            <div class="skill-header">
+                                <div>
+                                    <div class="skill-name">{{ skill.name }}</div>
+                                    {% if skill.certification %}
+                                        <div class="skill-meta">
+                                            <strong>Certification:</strong> {{ skill.certification }}
+                                        </div>
+                                    {% endif %}
+                                    {% if skill.verification_link %}
+                                        <div class="skill-meta">
+                                            <strong>Verification:</strong> 
+                                            <a href="{{ skill.verification_link }}" target="_blank" style="color: #4ECDC4; text-decoration: underline;">View Certificate</a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                {% if skill.certificate_file %}
+                                    <img src="/static/uploads/certificates/{{ skill.certificate_file }}" alt="Certificate" class="skill-certificate-thumbnail" onclick="openCertificateModal('/static/uploads/certificates/{{ skill.certificate_file }}')">
+                                {% endif %}
+                            </div>
+                            <div class="skill-content">
+                                <div class="skill-meta" style="color: rgba(255, 255, 255, 0.6);">
+                                    Added on {{ skill.created_at.strftime('%Y-%m-%d') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Icons Outside Card -->
+                        <div class="skill-icons">
+                            <a href="{{ url_for('user.edit_skill', skill_id=skill.id) }}" class="icon-btn" title="Edit skill">
+                                ✏️
+                            </a>
+                            <form method="POST" action="{{ url_for('user.delete_skill', skill_id=skill.id) }}" style="display: contents;" onsubmit="return confirm('Delete this skill?');">
+                                <button type="submit" class="icon-btn delete" title="Delete skill">
+                                    🗑️
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-skills">
+                <p>No skills added yet. Add your first skill!</p>
+            </div>
+        {% endif %}
+
+        <a href="{{ url_for('user.add_skill') }}" class="add-skill-btn">+ Add Skill</a>
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="profile-right" style="margin-top: 2rem;">
+        <div class="profile-section-header">
+            <h3 class="section-title">Recent Activity</h3>
+        </div>
+
+        <!-- Recent Posts -->
+        <div style="margin-bottom: 2rem;">
+            <h4 style="color: #4ECDC4; margin-bottom: 1rem; font-weight: 700;">Posts</h4>
+            {% if recent_posts %}
+                {% for post in recent_posts %}
+                <div class="info-box" style="margin-bottom: 1rem;" id="post-activity-{{ post.id }}">
+                    <p style="margin-bottom: 0.75rem;">{{ post.content[:200] }}{% if post.content|length > 200 %}…{% endif %}</p>
+                    <div style="display: flex; gap: 1.5rem; font-size: 0.9rem; color: rgba(255,255,255,0.6);">
+                        <span>{{ post.created_at.strftime('%Y-%m-%d') }}</span>
+                        <span>
+                            ❤️ <span class="post-likes-count" data-post-id="{{ post.id }}">{{ post.likes_count }}</span> likes
+                        </span>
+                        <span>💬 {{ post.comments|length }} comments</span>
+                        <a href="{{ url_for('community.view_post', post_id=post.id) }}" style="color: #77EB2C; margin-left: auto;">View →</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-skills"><p>No posts yet.</p></div>
+            {% endif %}
+        </div>
+
+        <!-- Recent Job Activity -->
+        {% if user.is_admin %}
+            <div>
+                <h4 style="color: #4ECDC4; margin-bottom: 1rem; font-weight: 700;">Jobs Created</h4>
+                {% if recent_jobs %}
+                    {% for job in recent_jobs %}
+                    <div class="info-box" style="margin-bottom: 1rem;">
+                        <h4 style="margin-bottom: 0.4rem;">{{ job.title }}</h4>
+                        <p style="font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-bottom: 0.5rem;">
+                            {{ job.location or 'Remote' }} &nbsp;·&nbsp; {{ job.job_type or 'Full-time' }}
+                        </p>
+                        <div style="display: flex; gap: 1.5rem; font-size: 0.9rem; color: rgba(255,255,255,0.6);">
+                            <span>Posted {{ job.created_at.strftime('%Y-%m-%d') }}</span>
+                            <span>{{ job.job_applications|length }} applicant(s)</span>
+                            <span style="color: {% if job.is_active %}#77EB2C{% else %}#e74c3c{% endif %};">
+                                {% if job.is_active %}Active{% else %}Closed{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-skills"><p>No jobs created yet.</p></div>
+                {% endif %}
+            </div>
+        {% else %}
+            <div>
+                <h4 style="color: #4ECDC4; margin-bottom: 1rem; font-weight: 700;">Job Applications</h4>
+                {% if recent_applications %}
+                    {% for app in recent_applications %}
+                    <div class="info-box" style="margin-bottom: 1rem;">
+                        <h4 style="margin-bottom: 0.4rem;">{{ app.job.title }}</h4>
+                        <p style="font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-bottom: 0.5rem;">
+                            {{ app.job.company.full_name }} &nbsp;·&nbsp; {{ app.job.location or 'Remote' }}
+                        </p>
+                        <div style="display: flex; gap: 1.5rem; font-size: 0.9rem; color: rgba(255,255,255,0.6);">
+                            <span>Applied {{ app.applied_at.strftime('%Y-%m-%d') }}</span>
+                            <span style="color: {% if app.status == 'selected' %}#77EB2C{% elif app.status == 'rejected' %}#e74c3c{% else %}#4ECDC4{% endif %}; font-weight: 700; text-transform: capitalize;">
+                                {{ app.status }}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-skills"><p>No job applications yet.</p></div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Certificate Modal -->
+    <div id="certificateModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCertificateModal()">✕</button>
+            <img id="modalImage" class="modal-image" alt="Certificate">
+        </div>
+    </div>
+
+    <script>
+        function openCertificateModal(imageSrc) {
+            const modal = document.getElementById('certificateModal');
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = imageSrc;
+            modal.classList.add('show');
+        }
+
+        function closeCertificateModal() {
+            const modal = document.getElementById('certificateModal');
+            modal.classList.remove('show');
+        }
+
+        document.getElementById('certificateModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeCertificateModal();
+            }
+        });
+
+        // Real-time like count refresh every 15 seconds
+        function refreshLikeCounts() {
+            document.querySelectorAll('.post-likes-count').forEach(function(el) {
+                const postId = el.dataset.postId;
+                fetch('/community/post/' + postId + '/likes_count')
+                    .then(function(r) { return r.ok ? r.json() : null; })
+                    .then(function(data) { if (data && data.likes_count !== undefined) el.textContent = data.likes_count; })
+                    .catch(function() {});
+            });
+        }
+        if (document.querySelectorAll('.post-likes-count').length > 0) {
+            setInterval(refreshLikeCounts, 15000);
+        }
+    </script>
+{% endblock %}

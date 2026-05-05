@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+
+{% block title %}Home - LYNQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .welcome-card {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 25px;
+        box-shadow: 0 8px 32px 0 rgba(10, 76, 104, 0.37);
+        padding: 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 3rem;
+        animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .welcome-text h1 {
+        font-size: 2.8rem;
+        color: white;
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+
+    .welcome-text h1 span {
+        color: #77EB2C;
+    }
+
+    .welcome-text p {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.1rem;
+        margin-top: 0.5rem;
+    }
+
+    .welcome-logo {
+        flex-shrink: 0;
+        text-align: center;
+        min-width: 250px;
+    }
+
+    .welcome-logo img {
+        width: 100%;
+        max-width: 250px;
+        height: auto;
+        display: block;
+        filter: drop-shadow(0 8px 16px rgba(0, 217, 255, 0.3));
+    }
+
+    .welcome-subtitle {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.85rem;
+        margin-top: 1rem;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+
+    .recent-activity-card {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 25px;
+        box-shadow: 0 8px 32px 0 rgba(10, 76, 104, 0.37);
+        padding: 2.5rem;
+        color: white;
+    }
+
+    .recent-activity-card h2 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        font-weight: 800;
+        color: white;
+        letter-spacing: -0.5px;
+    }
+
+    .activity-items {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .activity-item {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 1.8rem;
+        display: flex;
+        gap: 1.5rem;
+        align-items: flex-start;
+        transition: all 0.3s ease;
+    }
+
+    .activity-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+    }
+
+    .activity-avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+        border: 3px solid #77EB2C;
+        box-shadow: 0 4px 12px rgba(119, 235, 44, 0.3);
+    }
+
+    .activity-content {
+        flex: 1;
+    }
+
+    .activity-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.7rem;
+    }
+
+    .activity-user {
+        font-weight: 700;
+        color: #0A4C68;
+        font-size: 1.1rem;
+    }
+
+    .activity-date {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+
+    .activity-username {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin: 0.3rem 0 0.8rem 0;
+    }
+
+    .activity-text {
+        color: #555;
+        margin: 0.5rem 0;
+        line-height: 1.5;
+    }
+
+    .activity-stats {
+        display: flex;
+        gap: 1.5rem;
+        margin: 0.8rem 0;
+        color: #555;
+        font-size: 0.95rem;
+    }
+
+    .activity-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 12px;
+        object-fit: cover;
+        margin-left: auto;
+        border: 2px solid #f0f0f0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .activity-button {
+        background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%);
+        color: #0A4C68;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        margin-top: 1rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 1rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+    }
+
+    .activity-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .activity-button:hover {
+        background: linear-gradient(135deg, #5FD91E 0%, #4BC91B 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(119, 235, 44, 0.4);
+    }
+
+    .activity-button:hover::before {
+        left: 100%;
+    }
+
+    .job-label {
+        background: #0A7490;
+        color: white;
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .empty-state {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 4rem 2rem;
+        text-align: center;
+        color: #7f8c8d;
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        margin: 0.8rem 0;
+        font-size: 1.1rem;
+        color: #555;
+    }
+
+    .empty-state strong {
+        color: #0A4C68;
+    }
+
+    @media (max-width: 768px) {
+        .welcome-card {
+            flex-direction: column;
+            padding: 2rem;
+            gap: 2rem;
+        }
+
+        .welcome-text h1 {
+            font-size: 2rem;
+        }
+
+        .welcome-logo {
+            min-width: 100%;
+        }
+
+        .activity-item {
+            flex-direction: column;
+        }
+
+        .activity-image {
+            margin-left: 0;
+            width: 100%;
+            height: 200px;
+        }
+
+        .recent-activity-card {
+            padding: 1.5rem;
+        }
+
+        .recent-activity-card h2 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Welcome Section -->
+    <div class="welcome-card">
+        <div class="welcome-text">
+            <h1>Welcome<br><span>{{ user.full_name }}</span></h1>
+            <p>Let's get connected!</p>
+        </div>
+        <div class="welcome-logo">
+            <img src="{{ url_for('static', filename='images/mb.png') }}" alt="LYNQ Logo">
+            <p class="welcome-subtitle">Linking Youth to Network and Quality</p>
+        </div>
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="recent-activity-card">
+        <h2>Recent Activity</h2>
+        
+        {% if recent_activities %}
+            <div class="activity-items">
+                {% for activity in recent_activities %}
+                    <div class="activity-item">
+                        <img src="{{ activity.user.get_profile_picture() }}" alt="Profile" class="activity-avatar">
+                        
+                        <div class="activity-content">
+                            <div class="activity-header">
+                                <span class="activity-user">{{ activity.user.full_name }}</span>
+                                <span class="activity-date">{{ activity.created_at.strftime('%Y-%m-%d') }}</span>
+                            </div>
+                            <p class="activity-username">@{{ activity.user.usertag }}</p>
+                            {% if activity.type == 'post' %}
+                                <p class="activity-text">{{ activity.content[:120] }}{% if activity.content|length > 120 %}...{% endif %}</p>
+                                <div class="activity-stats">
+                                    <span>👍 12</span>
+                                    <span>💬 06</span>
+                                </div>
+                            {% elif activity.type == 'job' %}
+                                <p class="activity-text" style="font-weight: 600;">{{ activity.title }}</p>
+                                <div class="activity-stats">
+                                    <span class="job-label">📋 Job Hiring</span>
+                                </div>
+                                <button class="activity-button">Apply Now</button>
+                            {% endif %}
+                        </div>
+
+                        {% if activity.image %}
+                            <img src="{{ activity.image }}" alt="Activity" class="activity-image">
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">🚀</div>
+                <p><strong>No recent activity yet.</strong></p>
+                <p>Start exploring jobs and connecting with the community!</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

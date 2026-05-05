@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register - Job Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0A4C68 0%, #038081 50%, #77EB2C 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+
+        .register-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 25px;
+            box-shadow: 0 8px 32px 0 rgba(10, 76, 104, 0.37);
+            padding: 50px;
+            width: 100%;
+            max-width: 450px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-text {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: 2px;
+        }
+
+        .logo-text .highlight {
+            color: #77EB2C;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            margin-bottom: 0.7rem;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #0A4C68;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(10, 76, 104, 0.5);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            background: white;
+            box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .help-text {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .help-text.show {
+            display: block;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #0A4C68;
+            font-size: 1.2rem;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+
+        .toggle-password:hover {
+            color: #038081;
+        }
+
+        /* Role Selection */
+        .role-section {
+            margin-bottom: 2rem;
+        }
+
+        .role-label {
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            margin-bottom: 0.7rem;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .role-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .role-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .role-option:hover {
+            background: rgba(119, 235, 44, 0.1);
+            border-color: rgba(119, 235, 44, 0.4);
+        }
+
+        .role-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #77EB2C;
+            margin-right: 0.5rem;
+        }
+
+        .role-option label {
+            margin: 0;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .role-option input[type="radio"]:checked + label {
+            color: #77EB2C;
+            font-weight: 700;
+        }
+
+        .alerts {
+            margin-bottom: 1.5rem;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-error {
+            background: rgba(231, 76, 60, 0.2);
+            color: #FFE5E5;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .alert-success {
+            background: rgba(119, 235, 44, 0.2);
+            color: #E5FFE5;
+            border: 1px solid rgba(119, 235, 44, 0.3);
+        }
+
+        /* REGISTER BUTTON STYLES */
+        .btn-register {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: #77EB2C;
+            color: #0A4C68;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+            letter-spacing: 1px;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-register::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-register:hover {
+            background: #5FD91E;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(95, 217, 30, 0.4);
+        }
+
+        .btn-register:hover::before {
+            left: 100%;
+        }
+
+        .btn-register:active {
+            transform: translateY(-1px);
+        }
+
+        .login-section {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .login-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .login-link {
+            color: #77EB2C;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-left: 0.3rem;
+        }
+
+        .login-link:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .glass-card {
+                padding: 35px 25px;
+            }
+
+            .logo-text {
+                font-size: 2rem;
+            }
+
+            .btn-register {
+                padding: 12px;
+                font-size: 1rem;
+            }
+
+            .role-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="glass-card">
+            <!-- Logo Section -->
+            <div class="logo-section">
+                <div class="logo-text">REGISTER<span class="highlight">.</span></div>
+                <div class="subtitle">Job Platform</div>
+            </div>
+
+            <!-- Alerts -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alerts">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Register Form -->
+            <form method="POST" id="registerForm">
+                <!-- Username Field -->
+                <div class="form-group">
+                    <label for="usertag">User Name:</label>
+                    <input 
+                        type="text" 
+                        id="usertag" 
+                        name="usertag" 
+                        placeholder="Enter your username"
+                        required
+                    >
+                    <div class="help-text">3+ characters (letters, numbers, underscore)</div>
+                </div>
+
+                <!-- Full Name Field -->
+                <div class="form-group">
+                    <label for="full_name">Full Name:</label>
+                    <input 
+                        type="text" 
+                        id="full_name" 
+                        name="full_name" 
+                        placeholder="Enter your full name"
+                        required
+                    >
+                </div>
+
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="Enter your email"
+                        required
+                    >
+                    <div class="help-text" id="emailHelp">
+                        Recruiters must use @lynqplat.com email
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <div class="password-container">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Enter your password"
+                            required
+                        >
+                        <button 
+                            type="button" 
+                            class="toggle-password" 
+                            onclick="togglePassword()"
+                        >
+                            
+                        </button>
+                    </div>
+                    <div class="help-text">Minimum 6 characters</div>
+                </div>
+
+                <!-- Role Selection -->
+                <div class="role-section">
+                    <span class="role-label">Role:</span>
+                    <div class="role-options">
+                        <div class="role-option">
+                            <input 
+                                type="radio" 
+                                id="recruiter" 
+                                name="role" 
+                                value="recruiter"
+                                onchange="updateEmailHelp()"
+                            >
+                            <label for="recruiter">Recruiter</label>
+                        </div>
+                        <div class="role-option">
+                            <input 
+                                type="radio" 
+                                id="student" 
+                                name="role" 
+                                value="student"
+                                checked
+                                onchange="updateEmailHelp()"
+                            >
+                            <label for="student">Student</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Register Button -->
+                <button type="submit" class="btn-register">REGISTER</button>
+            </form>
+
+            <!-- Login Section -->
+            <div class="login-section">
+                <span class="login-text">
+                    Already have an account?
+                    <a href="{{ url_for('auth.login') }}" class="login-link">Login here</a>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = document.querySelector('.toggle-password');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
+        }
+
+        function updateEmailHelp() {
+            const recruiterRadio = document.getElementById('recruiter');
+            const emailHelp = document.getElementById('emailHelp');
+            const emailInput = document.getElementById('email');
+            
+            if (recruiterRadio.checked) {
+                emailHelp.textContent = '🔒 Recruiters must use @lynqplat.com email';
+                emailHelp.classList.add('show');
+                emailInput.placeholder = 'your.name@lynqplat.com';
+            } else {
+                emailHelp.textContent = 'Enter a valid email address';
+                emailHelp.classList.add('show');
+                emailInput.placeholder = 'your.email@example.com';
+            }
+        }
+
+        // Form validation on submit
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            const recruiterRadio = document.getElementById('recruiter');
+            const emailInput = document.getElementById('email').value.toLowerCase();
+            
+            if (recruiterRadio.checked && !emailInput.endsWith('@lynqplat.com')) {
+                e.preventDefault();
+                alert('⚠️ Recruiters must use an @lynqplat.com email address');
+            }
+        });
+
+        // Initialize help text on page load
+        updateEmailHelp();
+    </script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Comment - LYNQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .edit-comment-container {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 25px;
+        box-shadow: 0 8px 32px 0 rgba(10, 76, 104, 0.37);
+        padding: 3rem;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .edit-comment-container h1 {
+        color: white;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-group textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        color: #0A4C68;
+        font-size: 1rem;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 150px;
+        transition: all 0.3s ease;
+    }
+
+    .form-group textarea:focus {
+        outline: none;
+        background: white;
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%);
+        color: #0A4C68;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(119, 235, 44, 0.4);
+    }
+
+    .btn-cancel {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .edit-comment-container {
+            padding: 1.5rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-submit,
+        .btn-cancel {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="edit-comment-container">
+        <h1>Edit Comment</h1>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="content">Comment *</label>
+                <textarea id="content" name="content" placeholder="Edit your comment..." required>{{ comment.content }}</textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">Save Changes</button>
+                <a href="{{ url_for('community.view_post', post_id=comment.post_id) }}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

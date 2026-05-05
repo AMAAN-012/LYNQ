@@ -1,0 +1,460 @@
+{% extends "base.html" %}
+
+{% block title %}Community - LYNQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .community-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .community-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .community-title {
+        color: white;
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+
+    .create-post-btn {
+        background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%);
+        color: #0A4C68;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .create-post-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(119, 235, 44, 0.4);
+    }
+
+    .posts-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .post-card {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(10, 76, 104, 0.37);
+        transition: all 0.3s ease;
+    }
+
+    .post-card:hover {
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 12px 40px rgba(10, 76, 104, 0.5);
+        transform: translateY(-3px);
+    }
+
+    .post-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .post-author {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .post-author-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #77EB2C;
+    }
+
+    .post-author-info h4 {
+        color: #77EB2C;
+        margin: 0;
+        font-weight: 700;
+    }
+
+    .post-author-info p {
+        color: rgba(255, 255, 255, 0.6);
+        margin: 0.2rem 0 0 0;
+        font-size: 0.85rem;
+    }
+
+    .post-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .post-action-btn {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        padding: 0.3rem 0.6rem;
+    }
+
+    .post-action-btn:hover {
+        color: #e74c3c;
+        transform: scale(1.2);
+    }
+
+    .post-content {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 1.05rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        word-wrap: break-word;
+    }
+
+    .post-image {
+        width: 100%;
+        border-radius: 12px;
+        max-height: 400px;
+        object-fit: cover;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .post-interactions {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        flex-wrap: wrap;
+    }
+
+    .like-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .like-btn:hover {
+        background: rgba(220, 53, 69, 0.2);
+        border-color: rgba(220, 53, 69, 0.5);
+    }
+
+    .like-btn.liked {
+        background: rgba(220, 53, 69, 0.3);
+        border-color: rgba(220, 53, 69, 0.6);
+        color: #ff6b6b;
+    }
+
+    .like-icon {
+        font-size: 1.1rem;
+    }
+
+    .edit-post-link {
+        color: #4ECDC4;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        background: rgba(78, 205, 196, 0.1);
+        border: 1px solid rgba(78, 205, 196, 0.3);
+    }
+
+    .edit-post-link:hover {
+        background: rgba(78, 205, 196, 0.2);
+        color: #2BC4B5;
+    }
+
+    .post-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+    }
+
+    .post-stats {
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .post-stat {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .post-stat:hover {
+        color: #77EB2C;
+    }
+
+    .post-stat strong {
+        color: #77EB2C;
+    }
+
+    .post-time {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .view-post-link {
+        color: #4ECDC4;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .view-post-link:hover {
+        color: #2BC4B5;
+        text-decoration: underline;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 2rem;
+        padding: 2rem 0;
+        flex-wrap: wrap;
+    }
+
+    .pagination-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .pagination-btn:hover {
+        background: rgba(119, 235, 44, 0.2);
+        border-color: #77EB2C;
+        color: #77EB2C;
+    }
+
+    .pagination-btn.active {
+        background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%);
+        color: #0A4C68;
+        border: none;
+    }
+
+    .empty-posts {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .empty-posts p {
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .community-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .community-title {
+            font-size: 2rem;
+        }
+
+        .create-post-btn {
+            width: 100%;
+            text-align: center;
+        }
+
+        .post-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .post-card {
+            padding: 1.5rem;
+        }
+
+        .post-interactions {
+            flex-direction: column;
+        }
+
+        .like-btn,
+        .edit-post-link {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="community-container">
+        <!-- Header -->
+        <div class="community-header">
+            <h1 class="community-title">Community</h1>
+            <a href="{{ url_for('community.create_post') }}" class="create-post-btn">+ Create Post</a>
+        </div>
+
+        <!-- Posts -->
+        {% if posts %}
+            <div class="posts-container">
+                {% for post in posts %}
+                    <div class="post-card">
+                        <!-- Post Header -->
+                        <div class="post-header">
+                            <div class="post-author">
+                                <img src="{{ post.author.get_profile_picture() }}" alt="{{ post.author.full_name }}" class="post-author-avatar">
+                                <div class="post-author-info">
+                                    <h4>{{ post.author.full_name }}</h4>
+                                    <p>@{{ post.author.usertag }}</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Post Actions -->
+                            {% if post.author_id == user.id or user.is_admin %}
+                                <div class="post-actions">
+                                    <a href="{{ url_for('community.view_post', post_id=post.id) }}" class="post-action-btn" title="View post">👁️</a>
+                                    <form method="POST" action="{{ url_for('community.delete_post', post_id=post.id) }}" style="display: inline;" onsubmit="return confirm('Delete this post?');">
+                                        <button type="submit" class="post-action-btn" title="Delete post">🗑️</button>
+                                    </form>
+                                </div>
+                            {% else %}
+                                <a href="{{ url_for('community.view_post', post_id=post.id) }}" class="post-action-btn" title="View post">👁️</a>
+                            {% endif %}
+                        </div>
+
+                        <!-- Post Content -->
+                        <div class="post-content">
+                            {{ post.content }}
+                        </div>
+
+                        <!-- Post Image -->
+                        {% if post.image_filename %}
+                            <img src="/static/uploads/posts/{{ post.image_filename }}" alt="Post image" class="post-image">
+                        {% endif %}
+
+                        <!-- Post Interactions -->
+                        <div class="post-interactions">
+                            <button class="like-btn {% if post_data.get(post.id, {}).get('liked') %}liked{% endif %}" onclick="likePost({{ post.id }}, this)">
+                                <span class="like-icon">{% if post_data.get(post.id, {}).get('liked') %}❤️{% else %}🤍{% endif %}</span>
+                                <span id="like-count-{{ post.id }}">{{ post.likes_count }} Like{{ 's' if post.likes_count != 1 else '' }}</span>
+                            </button>
+                            
+                            {% if post.author_id == user.id or user.is_admin %}
+                                <a href="{{ url_for('community.edit_post', post_id=post.id) }}" class="edit-post-link">
+                                    ✏️ Edit
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <!-- Post Footer -->
+                        <div class="post-footer">
+                            <div class="post-stats">
+                                <div class="post-stat">
+                                    <strong>{{ post_data.get(post.id, {}).get('comments', 0) }}</strong> Comments
+                                </div>
+                            </div>
+                            <div>
+                                <span class="post-time">{{ post.created_at.strftime('%d %b %Y, %H:%M') }}</span>
+                                <span style="margin-left: 1rem;">
+                                    <a href="{{ url_for('community.view_post', post_id=post.id) }}" class="view-post-link">View Comments →</a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if pagination.pages > 1 %}
+                <div class="pagination">
+                    {% if pagination.has_prev %}
+                        <a href="{{ url_for('community.index', page=pagination.prev_num) }}" class="pagination-btn">← Previous</a>
+                    {% endif %}
+
+                    {% for page_num in pagination.iter_pages(left_edge=1, left_margin=1, right_margin=1, right_edge=1) %}
+                        {% if page_num %}
+                            {% if page_num == pagination.page %}
+                                <span class="pagination-btn active">{{ page_num }}</span>
+                            {% else %}
+                                <a href="{{ url_for('community.index', page=page_num) }}" class="pagination-btn">{{ page_num }}</a>
+                            {% endif %}
+                        {% else %}
+                            <span class="pagination-btn" style="cursor: default; background: none; border: none;">...</span>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if pagination.has_next %}
+                        <a href="{{ url_for('community.index', page=pagination.next_num) }}" class="pagination-btn">Next →</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="empty-posts">
+                <p>No posts yet. Be the first to share something!</p>
+                <a href="{{ url_for('community.create_post') }}" class="create-post-btn">+ Create First Post</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function likePost(postId, button) {
+            // Build the URL dynamically in JavaScript
+            const url = `/community/post/${postId}/like`;
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const icon = button.querySelector('.like-icon');
+                    const countElement = document.getElementById(`like-count-${postId}`);
+                    
+                    if (data.action === 'liked') {
+                        button.classList.add('liked');
+                        icon.textContent = '❤️';
+                    } else {
+                        button.classList.remove('liked');
+                        icon.textContent = '🤍';
+                    }
+                    
+                    countElement.textContent = data.likes_count + ' Like' + (data.likes_count !== 1 ? 's' : '');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+{% endblock %}

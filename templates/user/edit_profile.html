@@ -1,0 +1,502 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile - LYNQ{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/cropperjs@1.5.13/dist/cropper.css">
+<style>
+    .edit-container {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 25px;
+        box-shadow: 0 8px 32px 0 rgba(10, 76, 104, 0.37);
+        padding: 3rem;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .edit-container h1 {
+        color: white;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    /* Profile pic preview — clickable to trigger file picker */
+    .profile-pic-preview {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-pic-wrapper {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .profile-pic-wrapper img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #77EB2C;
+        box-shadow: 0 8px 24px rgba(119, 235, 44, 0.4);
+        display: block;
+        transition: opacity 0.3s ease;
+    }
+
+    .profile-pic-wrapper:hover img {
+        opacity: 0.7;
+    }
+
+    .profile-pic-overlay {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: rgba(10, 76, 104, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        font-size: 2rem;
+    }
+
+    .profile-pic-wrapper:hover .profile-pic-overlay {
+        opacity: 1;
+    }
+
+    .profile-pic-hint {
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 0.88rem;
+        margin-top: 0.8rem;
+    }
+
+    /* File input — completely hidden, triggered by JS */
+    #profile_picture_file {
+        display: none;
+    }
+
+    /* The visible upload button below the avatar */
+    .upload-trigger-btn {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.6rem 1.4rem;
+        background: rgba(78, 205, 196, 0.15);
+        border: 1px solid rgba(78, 205, 196, 0.5);
+        border-radius: 10px;
+        color: #4ECDC4;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .upload-trigger-btn:hover {
+        background: rgba(78, 205, 196, 0.25);
+        border-color: #4ECDC4;
+        color: #2BC4B5;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        color: #0A4C68;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: all 0.3s ease;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        background: white;
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%);
+        color: #0A4C68;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(119, 235, 44, 0.4);
+    }
+
+    .btn-cancel {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .help-text {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.85rem;
+        margin-top: 0.3rem;
+    }
+
+    /* ── CROP MODAL ── */
+    .crop-modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.92);
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .crop-modal.show {
+        display: flex;
+    }
+
+    .crop-modal-content {
+        background: rgba(10, 76, 104, 0.98);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        padding: 2rem;
+        border-radius: 20px;
+        max-width: 520px;
+        width: 100%;
+        box-shadow: 0 8px 32px rgba(10, 76, 104, 0.5);
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .crop-modal-header {
+        color: white;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .crop-modal-header h2 {
+        font-size: 1.4rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .crop-modal-header p {
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 0.88rem;
+    }
+
+    /* Circle preview overlay on the cropper */
+    .cropper-view-box,
+    .cropper-face {
+        border-radius: 50%;
+    }
+
+    #cropImage {
+        max-width: 100%;
+        max-height: 380px;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .crop-tools {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        margin: 1rem 0 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .crop-tool-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.5rem 0.9rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.82rem;
+        transition: all 0.3s ease;
+    }
+
+    .crop-tool-btn:hover {
+        background: rgba(78, 205, 196, 0.3);
+        border-color: rgba(78, 205, 196, 0.6);
+    }
+
+    .crop-controls {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .crop-btn {
+        padding: 0.8rem 1.6rem;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .crop-btn.primary {
+        background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%);
+        color: #0A4C68;
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+    }
+
+    .crop-btn.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(119, 235, 44, 0.4);
+    }
+
+    .crop-btn.secondary {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .crop-btn.secondary:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .edit-container { padding: 1.5rem; }
+        .form-actions { flex-direction: column; }
+        .btn-submit, .btn-cancel { width: 100%; }
+        .crop-modal-content { padding: 1.2rem; }
+        .crop-controls { flex-direction: column; }
+        .crop-btn { width: 100%; text-align: center; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-container">
+    <h1>Edit Profile</h1>
+
+    <!-- Profile picture preview (click to open file picker) -->
+    <div class="profile-pic-preview">
+        <div class="profile-pic-wrapper" onclick="document.getElementById('profile_picture_file').click()">
+            <img src="{{ user.get_profile_picture() }}" alt="Profile" id="previewImage">
+            <div class="profile-pic-overlay">📷</div>
+        </div>
+        <p class="profile-pic-hint">Click photo to change</p>
+        <button type="button" class="upload-trigger-btn" onclick="document.getElementById('profile_picture_file').click()">
+            📸 Choose Image
+        </button>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" id="profileForm">
+        <!-- FIX: Changed name from "profile_picture_file_hidden" to "profile_picture_file" to match backend -->
+        <input type="file" id="profile_picture_file" name="profile_picture_file"
+               accept="image/png,image/jpg,image/jpeg,image/gif,image/webp">
+
+        <!-- Full Name -->
+        <div class="form-group">
+            <label for="full_name">Full Name *</label>
+            <input type="text" id="full_name" name="full_name" value="{{ user.full_name }}" required>
+        </div>
+
+        <!-- Age -->
+        <div class="form-group">
+            <label for="age">Age</label>
+            <input type="number" id="age" name="age" value="{{ user.age or '' }}" min="1" max="120">
+        </div>
+
+        <!-- Company / College Name -->
+        <div class="form-group">
+            <label for="company_name">{% if user.is_admin %}Company{% else %}College{% endif %} Name</label>
+            <input type="text" id="company_name" name="company_name" value="{{ user.company_name or '' }}">
+        </div>
+
+        <!-- CGPA (students only) -->
+        {% if not user.is_admin %}
+        <div class="form-group">
+            <label for="cgpa">CGPA</label>
+            <input type="number" id="cgpa" name="cgpa" value="{{ user.cgpa or '' }}" min="0" max="10" step="0.01">
+            <div class="help-text">Scale 0 – 10</div>
+        </div>
+        {% endif %}
+
+        <!-- Bio -->
+        <div class="form-group">
+            <label for="bio">Bio</label>
+            <textarea id="bio" name="bio" placeholder="Tell us about yourself...">{{ user.bio or '' }}</textarea>
+            <div class="help-text">Optional: Share your story, interests, or professional background</div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Save Changes</button>
+            <a href="{{ url_for('user.profile') }}" class="btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<!-- ── CROP MODAL ── -->
+<div class="crop-modal" id="cropModal">
+    <div class="crop-modal-content">
+        <div class="crop-modal-header">
+            <h2>Crop Profile Picture</h2>
+            <p>Drag and resize the circle to fit your face perfectly</p>
+        </div>
+
+        <img id="cropImage" src="" alt="Crop">
+
+        <div class="crop-tools">
+            <button type="button" class="crop-tool-btn" onclick="cropperInstance.zoom(0.1)">🔍+ Zoom In</button>
+            <button type="button" class="crop-tool-btn" onclick="cropperInstance.zoom(-0.1)">🔍− Zoom Out</button>
+            <button type="button" class="crop-tool-btn" onclick="cropperInstance.rotate(90)">↻ Rotate</button>
+            <button type="button" class="crop-tool-btn" onclick="cropperInstance.reset()">↺ Reset</button>
+        </div>
+
+        <div class="crop-controls">
+            <button type="button" class="crop-btn primary" onclick="applyCrop()">✓ Use This Photo</button>
+            <button type="button" class="crop-btn secondary" onclick="closeCropModal()">✕ Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/cropperjs@1.5.13/dist/cropper.js"></script>
+<script>
+    let cropperInstance = null;
+    let originalFile = null; // Store the original file
+
+    // Open file picker when file input changes → launch cropper
+    document.getElementById('profile_picture_file').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Store original file for later submission
+        originalFile = file;
+
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+            const cropImg = document.getElementById('cropImage');
+            cropImg.src = ev.target.result;
+
+            // Destroy previous instance if any
+            if (cropperInstance) {
+                cropperInstance.destroy();
+                cropperInstance = null;
+            }
+
+            cropperInstance = new Cropper(cropImg, {
+                aspectRatio: 1,          // square → circle
+                viewMode: 1,
+                autoCropArea: 0.85,
+                responsive: true,
+                guides: true,
+                center: true,
+                highlight: true,
+                cropBoxMovable: true,
+                cropBoxResizable: true,
+                toggleDragModeOnDblclick: false,
+            });
+
+            document.getElementById('cropModal').classList.add('show');
+        };
+        reader.readAsDataURL(file);
+
+        // Reset so the same file can be re-selected
+        this.value = '';
+    });
+
+    function applyCrop() {
+        if (!cropperInstance) return;
+
+        const canvas = cropperInstance.getCroppedCanvas({
+            width: 400,
+            height: 400,
+            fillColor: '#fff',
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: 'high',
+        });
+
+        canvas.toBlob(function (blob) {
+            // FIX: Convert blob to File object and update the file input
+            const file = new File([blob], 'profile_picture.jpg', { type: 'image/jpeg' });
+            
+            // Create a new DataTransfer object to set the file
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            
+            // Update the file input with the cropped image
+            document.getElementById('profile_picture_file').files = dataTransfer.files;
+
+            // Update visible preview with base64 for immediate feedback
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('previewImage').src = e.target.result;
+            };
+            reader.readAsDataURL(blob);
+
+            closeCropModal();
+        }, 'image/jpeg', 0.92);
+    }
+
+    function closeCropModal() {
+        document.getElementById('cropModal').classList.remove('show');
+    }
+
+    // Close on backdrop click
+    document.getElementById('cropModal').addEventListener('click', function (e) {
+        if (e.target === this) closeCropModal();
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeCropModal();
+    });
+</script>
+{% endblock %}

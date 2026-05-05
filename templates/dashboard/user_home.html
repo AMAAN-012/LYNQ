@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Job Platform{% endblock %}
+
+{% block content %}
+<h1>Welcome, {{ user.full_name }}! 👋</h1>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin: 2rem 0;">
+    <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h2 style="color: #3498db; margin-bottom: 1rem;">{{ total_jobs }}</h2>
+        <p style="color: #7f8c8d; font-size: 0.9rem;">Available Jobs</p>
+    </div>
+    
+    <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h2 style="color: #2ecc71; margin-bottom: 1rem;">{{ user_applications }}</h2>
+        <p style="color: #7f8c8d; font-size: 0.9rem;">Applications Submitted</p>
+    </div>
+    
+    <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h2 style="color: #e74c3c; margin-bottom: 1rem;">{{ user_posts }}</h2>
+        <p style="color: #7f8c8d; font-size: 0.9rem;">Your Posts</p>
+    </div>
+    
+    <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h2 style="color: #f39c12; margin-bottom: 1rem;">{{ total_posts }}</h2>
+        <p style="color: #7f8c8d; font-size: 0.9rem;">Community Posts</p>
+    </div>
+</div>
+
+<div style="margin: 2rem 0;">
+    <a href="{{ url_for('jobs.list_jobs') }}" class="btn btn-primary">Browse Jobs 🔍</a>
+    <a href="{{ url_for('community.create_post') }}" class="btn btn-secondary" style="margin-left: 1rem;">Create Post ✍️</a>
+    <a href="{{ url_for('jobs.my_applications') }}" class="btn btn-secondary" style="margin-left: 1rem;">My Applications 📋</a>
+</div>
+{% endblock %}

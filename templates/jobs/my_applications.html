@@ -1,0 +1,437 @@
+{% extends "base.html" %}
+
+{% block title %}My Applications - LYNQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .applications-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .applications-header {
+        margin-bottom: 2rem;
+    }
+
+    .applications-title {
+        color: white;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .applications-subtitle {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    .applications-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .application-card {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(10, 76, 104, 0.37);
+        transition: all 0.3s ease;
+    }
+
+    .application-card:hover {
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 12px 40px rgba(10, 76, 104, 0.5);
+        transform: translateY(-3px);
+    }
+
+    .application-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .application-info h3 {
+        color: #77EB2C;
+        margin: 0 0 0.3rem 0;
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+
+    .application-info p {
+        color: rgba(255, 255, 255, 0.6);
+        margin: 0.2rem 0;
+        font-size: 0.9rem;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+
+    .status-pending {
+        background: rgba(255, 193, 7, 0.2);
+        color: #ffd54f;
+        border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+
+    .status-reviewed {
+        background: rgba(33, 150, 243, 0.2);
+        color: #64b5f6;
+        border: 1px solid rgba(33, 150, 243, 0.3);
+    }
+
+    .status-accepted {
+        background: rgba(76, 175, 80, 0.2);
+        color: #81c784;
+        border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+
+    .status-rejected {
+        background: rgba(244, 67, 54, 0.2);
+        color: #ef5350;
+        border: 1px solid rgba(244, 67, 54, 0.3);
+    }
+
+    .status-info {
+        background: rgba(78, 205, 196, 0.15);
+        border-left: 3px solid #4ECDC4;
+        padding: 1rem;
+        border-radius: 8px;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.95rem;
+        margin: 1rem 0;
+    }
+
+    .job-details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+
+    .job-detail-item {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-radius: 12px;
+    }
+
+    .job-detail-label {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .job-detail-value {
+        color: white;
+        margin-top: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .submission-details {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin: 1.5rem 0;
+    }
+
+    .submission-details h4 {
+        color: #4ECDC4;
+        margin-top: 0;
+        font-size: 1.1rem;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        color: rgba(255, 255, 255, 0.6);
+        font-weight: 600;
+    }
+
+    .detail-value {
+        color: white;
+    }
+
+    .detail-value a {
+        color: #4ECDC4;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .detail-value a:hover {
+        color: #2BC4B5;
+        text-decoration: underline;
+    }
+
+    .cover-letter-section {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin: 1.5rem 0;
+    }
+
+    .cover-letter-section h4 {
+        color: #4ECDC4;
+        margin-top: 0;
+    }
+
+    .cover-letter-content {
+        color: rgba(255, 255, 255, 0.8);
+        white-space: pre-wrap;
+        line-height: 1.6;
+    }
+
+    .review-notes-section {
+        background: rgba(244, 67, 54, 0.1);
+        border-left: 3px solid #ef5350;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin: 1.5rem 0;
+    }
+
+    .review-notes-section h4 {
+        color: #ef5350;
+        margin-top: 0;
+    }
+
+    .review-notes-content {
+        color: rgba(255, 255, 255, 0.8);
+        white-space: pre-wrap;
+        line-height: 1.6;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-view-detail {
+        background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%);
+        color: #0A4C68;
+        border: none;
+        padding: 0.7rem 1.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-view-detail:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(119, 235, 44, 0.3);
+    }
+
+    .empty-state {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 20px;
+        padding: 3rem 2rem;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .empty-state p {
+        font-size: 1.1rem;
+        margin: 1rem 0;
+    }
+
+    .alert {
+        background: rgba(52, 211, 153, 0.2);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: #86efac;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .applications-title {
+            font-size: 2rem;
+        }
+
+        .application-header {
+            flex-direction: column;
+        }
+
+        .application-card {
+            padding: 1.5rem;
+        }
+
+        .job-details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-view-detail {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="applications-container">
+        <!-- Header -->
+        <div class="applications-header">
+            <h1 class="applications-title">📋 My Applications</h1>
+            {% if applications %}
+                <p class="applications-subtitle">You have <strong style="color: #77EB2C;">{{ applications|length }}</strong> application(s)</p>
+            {% endif %}
+        </div>
+
+        <!-- Alerts -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Applications List -->
+        {% if applications %}
+            <div class="applications-list">
+                {% for app in applications %}
+                    <div class="application-card">
+                        <!-- Header -->
+                        <div class="application-header">
+                            <div class="application-info">
+                                <h3>{{ app.job.title }}</h3>
+                                <p><strong style="color: #77EB2C;">{{ app.job.company }}</strong> • Applied {{ app.applied_at.strftime('%d %b %Y') }}</p>
+                            </div>
+                            <span class="status-badge status-{{ app.status }}">{{ app.status.upper() }}</span>
+                        </div>
+
+                        <!-- Status Info -->
+                        <div class="status-info">
+                            {% if app.status == 'pending' %}
+                                ⏳ Your application is waiting to be reviewed
+                            {% elif app.status == 'reviewed' %}
+                                👀 Your application has been reviewed
+                            {% elif app.status == 'accepted' %}
+                                ✅ Congratulations! Your application has been accepted
+                            {% elif app.status == 'rejected' %}
+                                ❌ Unfortunately, your application was not selected
+                            {% endif %}
+                        </div>
+
+                        <!-- Job Details -->
+                        <div class="job-details-grid">
+                            <div class="job-detail-item">
+                                <div class="job-detail-label">📍 Location</div>
+                                <div class="job-detail-value">{{ app.job.location or 'Remote' }}</div>
+                            </div>
+                            <div class="job-detail-item">
+                                <div class="job-detail-label">💼 Type</div>
+                                <div class="job-detail-value">{{ app.job.job_type or 'Full-time' }}</div>
+                            </div>
+                            <div class="job-detail-item">
+                                <div class="job-detail-label">💰 Salary</div>
+                                <div class="job-detail-value">{{ app.job.salary_range or 'Negotiable' }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Submission Details -->
+                        <div class="submission-details">
+                            <h4>📋 Your Submission</h4>
+                            <div class="detail-row">
+                                <span class="detail-label">📱 Phone:</span>
+                                <span class="detail-value">{{ app.phone }}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">✉️ Email:</span>
+                                <span class="detail-value"><a href="mailto:{{ app.email }}">{{ app.email }}</a></span>
+                            </div>
+                            {% if app.linkedin_url %}
+                                <div class="detail-row">
+                                    <span class="detail-label">💼 LinkedIn:</span>
+                                    <span class="detail-value"><a href="{{ app.linkedin_url }}" target="_blank">View Profile →</a></span>
+                                </div>
+                            {% endif %}
+                            {% if app.portfolio_url %}
+                                <div class="detail-row">
+                                    <span class="detail-label">🌐 Portfolio:</span>
+                                    <span class="detail-value"><a href="{{ app.portfolio_url }}" target="_blank">View Portfolio →</a></span>
+                                </div>
+                            {% endif %}
+                            {% if app.resume_filename %}
+                                <div class="detail-row">
+                                    <span class="detail-label">📄 Resume:</span>
+                                    <span class="detail-value">✓ Uploaded</span>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Cover Letter -->
+                        {% if app.cover_letter %}
+                            <div class="cover-letter-section">
+                                <h4>💬 Your Cover Letter</h4>
+                                <div class="cover-letter-content">{{ app.cover_letter }}</div>
+                            </div>
+                        {% endif %}
+
+                        <!-- Review Notes -->
+                        {% if app.review_notes %}
+                            <div class="review-notes-section">
+                                <h4>📝 Admin Feedback</h4>
+                                <div class="review-notes-content">{{ app.review_notes }}</div>
+                            </div>
+                        {% endif %}
+
+                        <!-- Timeline -->
+                        {% if app.reviewed_at %}
+                            <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.85rem; margin-top: 1rem;">
+                                Reviewed on {{ app.reviewed_at.strftime('%d %b %Y at %H:%M') }}
+                            </div>
+                        {% endif %}
+
+                        <!-- Action Button -->
+                        <div class="action-buttons">
+                            <a href="{{ url_for('jobs.view_application_detail', app_id=app.id) }}" class="btn-view-detail">View Full Details →</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>📋 No Applications Yet</p>
+                <p style="margin: 1rem 0;">You haven't applied for any jobs yet.</p>
+                <a href="{{ url_for('jobs.list_jobs') }}" style="background: linear-gradient(135deg, #77EB2C 0%, #5FD91E 100%); color: #0A4C68; border: none; padding: 0.8rem 1.5rem; border-radius: 10px; cursor: pointer; font-weight: 700; text-decoration: none; display: inline-block;">Browse Jobs →</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
