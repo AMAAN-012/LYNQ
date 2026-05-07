@@ -311,8 +311,7 @@
                             {% if activity.type == 'post' %}
                                 <p class="activity-text">{{ activity.content[:120] }}{% if activity.content|length > 120 %}...{% endif %}</p>
                                 <div class="activity-stats">
-                                    <span>👍 12</span>
-                                    <span>💬 06</span>
+                                    
                                 </div>
                             {% elif activity.type == 'job' %}
                                 <p class="activity-text" style="font-weight: 600;">{{ activity.title }}</p>
