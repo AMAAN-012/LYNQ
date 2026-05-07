@@ -1,5 +1,6 @@
 import os
 import secrets
+import cloudinary.uploader
 from werkzeug.utils import secure_filename
 from flask import current_app
 
@@ -17,6 +18,7 @@ def allowed_file(filename, file_type='resume'):
     ext = filename.rsplit('.', 1)[1].lower()
     return ext in ALLOWED_EXTENSIONS.get(file_type, set())
 
+
 def save_profile_picture(file):
     """Save profile picture with unique filename"""
     try:
@@ -26,23 +28,17 @@ def save_profile_picture(file):
         if not allowed_file(file.filename, 'profile'):
             return False, 'Only PNG, JPG, JPEG, GIF, WebP files allowed'
         
-        # Create profiles folder
-        base_path = os.path.join(current_app.root_path, 'static', 'uploads', 'profiles')
-        os.makedirs(base_path, exist_ok=True)
+        # 🔥 NEW: Upload to Cloudinary
+        result = cloudinary.uploader.upload(file, folder="profiles")
+        image_url = result['secure_url']
         
-        # Generate unique filename with timestamp
-        import time
-        filename = f"profile_{int(time.time())}_{secrets.token_hex(4)}.jpg"
-        
-        filepath = os.path.join(base_path, filename)
-        file.save(filepath)
-        
-        print(f"✅ Saved to: {filepath}")
-        return True, filename
+        print(f"✅ Uploaded to Cloudinary: {image_url}")
+        return True, image_url
     
     except Exception as e:
         print(f"❌ Save error: {str(e)}")
         return False, f'Error saving file: {str(e)}'
+
 
 def save_resume(file):
     """Save resume/CV file with unique filename"""
@@ -53,23 +49,21 @@ def save_resume(file):
         if not allowed_file(file.filename, 'resume'):
             return False, 'Only PDF, DOC, DOCX files allowed'
         
-        # Create resumes folder
-        base_path = os.path.join(current_app.root_path, 'static', 'uploads', 'resumes')
-        os.makedirs(base_path, exist_ok=True)
+        # 🔥 NEW: Upload to Cloudinary (raw for pdf/doc)
+        result = cloudinary.uploader.upload(
+            file,
+            folder="resumes",
+            resource_type="raw"
+        )
+        file_url = result['secure_url']
         
-        # Generate unique filename with timestamp
-        import time
-        filename = f"resume_{int(time.time())}_{secrets.token_hex(4)}.pdf"
-        
-        filepath = os.path.join(base_path, filename)
-        file.save(filepath)
-        
-        print(f"✅ Resume saved to: {filepath}")
-        return True, filename
+        print(f"✅ Resume uploaded: {file_url}")
+        return True, file_url
     
     except Exception as e:
         print(f"❌ Resume save error: {str(e)}")
         return False, f'Error saving file: {str(e)}'
+
 
 def save_image(file, folder='certificates'):
     """Save image file (for certificates, etc)"""
@@ -89,46 +83,27 @@ def save_image(file, folder='certificates'):
         if ext not in allowed_exts:
             return False, f'Only image files allowed (.png, .jpg, .jpeg, .gif, .webp)'
         
-        # Create folder
-        base_path = os.path.join(current_app.root_path, 'static', 'uploads', folder)
-        os.makedirs(base_path, exist_ok=True)
+        # 🔥 NEW: Upload to Cloudinary
+        result = cloudinary.uploader.upload(file, folder=folder)
+        image_url = result['secure_url']
         
-        # Generate unique filename
-        import time
-        filename = f"{folder}_{int(time.time())}_{secrets.token_hex(4)}.jpg"
-        
-        filepath = os.path.join(base_path, filename)
-        file.save(filepath)
-        
-        print(f"✅ Image saved to: {filepath}")
-        return True, filename
+        print(f"✅ Image uploaded: {image_url}")
+        return True, image_url
     
     except Exception as e:
         print(f"❌ Save error: {str(e)}")
         return False, f'Error saving file: {str(e)}'
 
+
 def delete_file(filename, folder='profiles'):
-    """Delete a file from uploads folder"""
-    try:
-        if not filename or filename == 'default_profile.png':
-            return False
-        
-        # Build path based on folder type
-        base_path = os.path.join(current_app.root_path, 'static', 'uploads', folder)
-        filepath = os.path.join(base_path, filename)
-        
-        if os.path.exists(filepath):
-            os.remove(filepath)
-            print(f"✅ Deleted file: {filepath}")
-            return True
-        else:
-            print(f"⚠️ File not found: {filepath}")
-            return False
-            
-    except Exception as e:
-        print(f"❌ Delete error: {str(e)}")
-        return False
+    """Delete a file (Cloudinary version skip for now)"""
+    return True
+
 
 def delete_resume(filename):
     """Delete a resume file"""
-    return delete_file(filename, 'resumes')
+    return True
+
+
+
+

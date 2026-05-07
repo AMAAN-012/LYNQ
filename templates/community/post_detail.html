@@ -302,7 +302,7 @@
             </div>
 
             {% if post.image_filename %}
-                <img src="/static/uploads/posts/{{ post.image_filename }}" alt="Post image" class="post-image">
+                <img src="{{ post.image_filename }}" alt="Post image" class="post-image">
             {% endif %}
 
             <div class="post-time">

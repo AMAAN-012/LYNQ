@@ -313,7 +313,7 @@
             <!-- Image Preview -->
             <div class="image-preview-container" id="imagePreviewContainer" onclick="document.getElementById('postImageInput').click()">
                 {% if post.image_filename %}
-                    <img id="previewImage" src="/static/uploads/posts/{{ post.image_filename }}" style="display: block;">
+                    <img id="previewImage" src="{{ post.image_filename }}" style="display: block;">
                 {% else %}
                     <div class="image-placeholder">
                         🖼️ Click to change image

@@ -215,7 +215,7 @@
             {% if skill.certificate_file %}
                 <div class="certificate-preview">
                     <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 0.5rem;">Current Certificate:</p>
-                    <img src="/static/uploads/certificates/{{ skill.certificate_file }}" alt="Certificate">
+                    <img src="{{ skill.certificate_file }}" alt="Certificate">
                 </div>
             {% endif %}
 

@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 
+
 load_dotenv()  # Loads from .env file
 
 class Config:
@@ -22,6 +23,10 @@ class Config:
     ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx', 'txt'}
     if not SQLALCHEMY_DATABASE_URI:
         raise ValueError("DATABASE_URL environment variable not set!")
+    
+    CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME")
+    CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY")
+    CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET")
 
 class DevelopmentConfig(Config):
     DEBUG = True
